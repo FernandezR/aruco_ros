@@ -73,7 +73,7 @@ private:
   std::string reference_frame;
 
   double marker_size;
-  int marker_id;
+  // int marker_id;
   bool force_detect;
 
   ros::NodeHandle nh;
@@ -108,7 +108,7 @@ public:
     pixel_pub = nh.advertise<geometry_msgs::PointStamped>("pixel", 10);
 
     nh.param<double>("marker_size", marker_size, 0.05);
-    nh.param<int>("marker_id", marker_id, 300);
+    // nh.param<int>("marker_id", marker_id, 300);
     nh.param<std::string>("reference_frame", reference_frame, "");
     nh.param<std::string>("camera_frame", camera_frame, "");
     nh.param<std::string>("marker_frame", marker_frame, "");
@@ -120,8 +120,8 @@ public:
     if ( reference_frame.empty() )
       reference_frame = camera_frame;
 
-    ROS_INFO("Aruco node started with marker size of %f m and marker id to track: %d",
-             marker_size, marker_id);
+    // ROS_INFO("Aruco node started with marker size of %f m and marker id to track: %d",
+    //          marker_size, marker_id);
     ROS_INFO("Aruco node will publish pose to TF with %s as parent and %s as child.",
              reference_frame.c_str(), marker_frame.c_str());
 
@@ -188,6 +188,8 @@ public:
       {
         cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::RGB8);
         inImage = cv_ptr->image;
+
+        ROS_DEBUG("Received image");
 
         //detection results will go into "markers"
         markers.clear();
@@ -276,32 +278,31 @@ public:
               CvDrawingUtils::draw3dAxis(inImage, markers[i], camParam);
             }
           }
+        }
+        if(image_pub.getNumSubscribers() > 0)
+        {
+          //show input with augmented information
+          cv_bridge::CvImage out_msg;
+          out_msg.header.stamp = curr_stamp;
+          out_msg.encoding = sensor_msgs::image_encodings::RGB8;
+          out_msg.image = inImage;
+          image_pub.publish(out_msg.toImageMsg());
+        }
 
-          if(image_pub.getNumSubscribers() > 0)
-          {
-            //show input with augmented information
-            cv_bridge::CvImage out_msg;
-            out_msg.header.stamp = curr_stamp;
-            out_msg.encoding = sensor_msgs::image_encodings::RGB8;
-            out_msg.image = inImage;
-            image_pub.publish(out_msg.toImageMsg());
-          }
+        if(debug_pub.getNumSubscribers() > 0)
+        {
+          cv::Mat debugImage;
+          cv_bridge::CvImagePtr cv_ptr_debug;
+          cv_ptr_debug = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::RGB8);
+          debugImage = cv_ptr_debug->image;
+          fDetector.draw3d(debugImage);
 
-          if(debug_pub.getNumSubscribers() > 0)
-          {
-            cv::Mat debugImage;
-            cv_bridge::CvImagePtr cv_ptr_debug;
-            cv_ptr_debug = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::RGB8);
-            debugImage = cv_ptr_debug->image;
-            fDetector.draw3d(debugImage);
-
-            //show also the internal image resulting from the threshold operation
-            cv_bridge::CvImage debug_msg;
-            debug_msg.header.stamp = curr_stamp;
-            debug_msg.encoding = sensor_msgs::image_encodings::RGB8;
-            debug_msg.image = debugImage;
-            debug_pub.publish(debug_msg.toImageMsg());
-          }
+          //show also the internal image resulting from the threshold operation
+          cv_bridge::CvImage debug_msg;
+          debug_msg.header.stamp = curr_stamp;
+          debug_msg.encoding = sensor_msgs::image_encodings::RGB8;
+          debug_msg.image = debugImage;
+          debug_pub.publish(debug_msg.toImageMsg());
         }
       }
       catch (cv_bridge::Exception& e)
