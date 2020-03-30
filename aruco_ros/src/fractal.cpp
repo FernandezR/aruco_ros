@@ -74,6 +74,7 @@ private:
 
   double marker_size;
   int marker_id;
+  bool force_detect;
 
   ros::NodeHandle nh;
   image_transport::ImageTransport it;
@@ -112,6 +113,7 @@ public:
     nh.param<std::string>("camera_frame", camera_frame, "");
     nh.param<std::string>("marker_frame", marker_frame, "");
     nh.param<bool>("image_is_rectified", useRectifiedImages, true);
+    nh.param<bool>("force_detect", force_detect, false);
 
     ROS_ASSERT(camera_frame != "" && marker_frame != "");
 
@@ -170,7 +172,8 @@ public:
         (transform_pub.getNumSubscribers() == 0) &&
         (position_pub.getNumSubscribers() == 0) &&
         (marker_pub.getNumSubscribers() == 0) &&
-        (pixel_pub.getNumSubscribers() == 0))
+        (pixel_pub.getNumSubscribers() == 0)  &&
+        !force_detect)
     {
       ROS_DEBUG("No subscribers, not looking for aruco markers");
       return;
