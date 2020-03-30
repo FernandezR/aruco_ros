@@ -2,6 +2,18 @@
 Changelog for package aruco
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.0.0 (2020-03-30)
+------------------
+* Migration to aruco 3.1.11
+
+2.0.2 (2019-11-09)
+------------------
+
+2.0.1 (2019-09-27)
+------------------
+* Fix dependency
+* Contributors: Victor Lopez
+
 1.0.0 (2019-09-27)
 ------------------
 * Fix shadowed variables
@@ -20,14 +32,6 @@ Changelog for package aruco
   forcing opencv3 build for kinetic
 * forcing opencv3 build for kinetic
 * Contributors: Andrea Ponza, Bence Magyar, Christopher Hrabia, Jordi Pages, Victor Lopez
-
-2.0.2 (2019-11-09)
-------------------
-
-2.0.1 (2019-09-27)
-------------------
-* Fix dependency
-* Contributors: Victor Lopez
 
 0.2.2 (2017-07-25)
 ------------------
