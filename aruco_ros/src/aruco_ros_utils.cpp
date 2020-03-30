@@ -70,3 +70,23 @@ tf::Transform aruco_ros::arucoMarker2Tf(const aruco::Marker &marker)
 
   return tf::Transform(tf_rot, tf_orig);
 }
+
+tf::Transform aruco_ros::arucoMarker2Tf(const cv::Mat Rvec, const cv::Mat Tvec)
+{
+  cv::Mat rot(3, 3, CV_64FC1);
+  cv::Mat Rvec64;
+  Rvec.convertTo(Rvec64, CV_64FC1);
+  cv::Rodrigues(Rvec64, rot);
+  cv::Mat tran64;
+  Tvec.convertTo(tran64, CV_64FC1);
+
+
+  tf::Matrix3x3 tf_rot(rot.at<double>(0,0), rot.at<double>(0,1), rot.at<double>(0,2),
+                       rot.at<double>(1,0), rot.at<double>(1,1), rot.at<double>(1,2),
+                       rot.at<double>(2,0), rot.at<double>(2,1), rot.at<double>(2,2));
+
+  tf::Vector3 tf_orig(tran64.at<double>(0,0), tran64.at<double>(1,0), tran64.at<double>(2,0));
+
+
+  return tf::Transform(tf_rot, tf_orig);
+}

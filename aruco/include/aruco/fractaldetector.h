@@ -35,8 +35,15 @@ namespace aruco {
         void setParams(const CameraParameters& cam_params, float markerSize)
         {
             _cam_params = cam_params;
+            _msize = markerSize;
 
-            Tracker.setParams(cam_params, getConfiguration(), markerSize);
+            FractalMarkerSet fMS = getConfiguration();
+            _fractalLabeler->setConfiguration(fMS.convertToMeters(markerSize));
+
+            // Tracker.setParams(cam_params, getConfiguration(), markerSize);
+            Tracker.setParams(cam_params, getConfiguration());
+
+            printf("fractaldetector: Marker is in meters: %u\n",getConfiguration().isExpressedInMeters());
         }
 
         // return fractalmarkerset
@@ -48,7 +55,8 @@ namespace aruco {
         // return true if any marker is detected, false otherwise
         bool detect(const cv::Mat& input)
         {
-           Markers = _markerDetector->detect(input);
+           // Markers = _markerDetector->detect(input);
+           Markers = _markerDetector->detect(input, _cam_params, _msize);
 
            if(Markers.size() > 0) return true;
            else return false;
@@ -105,6 +113,7 @@ namespace aruco {
         FractalPoseTracker Tracker;
         Params _params;
         CameraParameters _cam_params; //Camera parameters
+        float _msize; //Marker size
         cv::Ptr<FractalMarkerLabeler> _fractalLabeler;
         cv::Ptr<MarkerDetector> _markerDetector;
     };

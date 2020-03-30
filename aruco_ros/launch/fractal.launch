@@ -1,0 +1,23 @@
+<launch>
+
+    <!-- OPTIONS: FRACTAL_2L_6, FRACTAL_3L_6, FRACTAL_4L_6, FRACTAL_5L_6
+    or path to configuration file created with fractal_create -->
+    <arg name="fractal_config"  default="FRACTAL_3L_6"/>
+
+    <arg name="markerSize"      default="0.034"/>    <!-- in m -->
+    <arg name="eye"             default="left"/>
+    <arg name="marker_frame"    default="aruco_marker_frame"/>
+    <arg name="ref_frame"       default=""/>  <!-- leave empty and the pose will be published wrt param parent_name -->
+
+    <node pkg="aruco_ros" type="fractal" name="aruco_fractal">
+        <remap from="/camera_info" to="/stereo/$(arg eye)/camera_info" />
+        <remap from="/image" to="/stereo/$(arg eye)/image_rect_color" />
+        <param name="image_is_rectified" value="True"/>
+        <param name="marker_size"        value="$(arg markerSize)"/>
+        <param name="marker_id"          value="$(arg fractal_config)"/>
+        <param name="reference_frame"    value="$(arg ref_frame)"/>   <!-- frame in which the marker pose will be refered -->
+        <param name="camera_frame"       value="stereo_gazebo_$(arg eye)_camera_optical_frame"/>
+        <param name="marker_frame"       value="$(arg marker_frame)" />
+    </node>
+
+</launch>

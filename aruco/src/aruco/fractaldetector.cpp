@@ -16,6 +16,7 @@ namespace aruco
          _fractalLabeler = FractalMarkerLabeler::create((FractalMarkerSet::CONF_TYPES)params);
          _params.configuration_type=FractalMarkerSet::getTypeString((FractalMarkerSet::CONF_TYPES)params);
          _markerDetector->setMarkerLabeler(_fractalLabeler);
+         std::cout << "Marker label set to: " << _params.configuration_type << std::endl;
     }
 
     void FractalDetector::setConfiguration(std::string params)
@@ -23,6 +24,7 @@ namespace aruco
         _params.configuration_type=params;
         _fractalLabeler = FractalMarkerLabeler::create(params);
         _markerDetector->setMarkerLabeler(_fractalLabeler);
+        std::cout << "Marker label set to: " << _params.configuration_type << std::endl;
     }
 
     void FractalDetector::drawMarkers(cv::Mat &img)

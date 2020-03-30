@@ -21,5 +21,6 @@ aruco::CameraParameters rosCameraInfo2ArucoCamParams(const sensor_msgs::CameraIn
 //FIXME: make parameter const as soon as the used function is also const
 tf::Transform arucoMarker2Tf(const aruco::Marker& marker);
 
+tf::Transform arucoMarker2Tf(const cv::Mat Rvec, const cv::Mat Tvec);
 }
 #endif // ARUCO_ROS_UTILS_H
